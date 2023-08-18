@@ -236,11 +236,11 @@ class PositionEmbeddingRandom(nn.Module):
         h, w = size
         device: Any = self.positional_encoding_gaussian_matrix.device
         grid = torch.ones((h, w), device=device, dtype=torch.float32)
-        y_embed = grid.cumsum(dim=0) - 0.5
-        x_embed = grid.cumsum(dim=1) - 0.5
+        y_embed = grid.cumsum(dim=0) - 0.5 # 0维度【列】进行叠加计算也就是1 2 3 。。。 64
+        x_embed = grid.cumsum(dim=1) - 0.5 # 1维度【行】进行叠加计算
         y_embed = y_embed / h
         x_embed = x_embed / w
-
+        # 叠加之后做成位置编码，x_embed y_embed 在最后一个维度进行拼接也就是x，y坐标，然后送入函数
         pe = self._pe_encoding(torch.stack([x_embed, y_embed], dim=-1))
         return pe.permute(2, 0, 1)  # C x H x W
 

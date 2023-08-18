@@ -149,7 +149,7 @@ class SamPredictor:
             box_torch = box_torch[None, :]
         if mask_input is not None:
             mask_input_torch = torch.as_tensor(mask_input, dtype=torch.float, device=self.device)
-            mask_input_torch = mask_input_torch[None, :, :, :]
+            mask_input_torch = mask_input_torch[None, :, :, :] # 加一个维度
 
         masks, iou_predictions, low_res_masks = self.predict_torch(
             coords_torch,
@@ -229,6 +229,7 @@ class SamPredictor:
 
         # Predict masks
         # low resolution mask LOL
+        # image pe 是位置编码，生成的。简单的几何学！！
         low_res_masks, iou_predictions = self.model.mask_decoder(
             image_embeddings=self.features,
             image_pe=self.model.prompt_encoder.get_dense_pe(),
